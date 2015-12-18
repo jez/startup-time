@@ -2,24 +2,19 @@ require 'benchmark'
 require 'rake/clean'
 require 'tty'
 
-CC = 'gcc'
+CC = ENV['CC'] || 'gcc'
 CLEAN.include %w[ *.out *.class .crystal ]
 
 def which (command)
-  TTY::Which.which command
+  TTY::Which.which command.to_s
 end
 
-def silent command
+def silent (command)
   system "#{command} > /dev/null 2>&1"
 end
 
 def time (test, *args)
-  name = args.first
-
-  unless ((args.size == 1) ? File.exists?(name) : which(name))
-    STDERR.puts "#{name} not found, skipping"
-    return
-  end
+  return unless args.size == 1 ? File.exists?(args.first) : which(args.first)
 
   out = nil
   command = args.join ' '
@@ -28,53 +23,61 @@ def time (test, *args)
 
   abort "#{test}: invalid output: #{out}" unless out == 'Hello, world!'
 
-  @times.push [ test, (real * 1000).round(1) ]
+  @times.push [ test, (real * 1000).round(2) ]
 end
 
-task :compile => %w[ hello.c.out hello.cr.out hello.go.out HelloJava.class HelloScala.class ]
-
-if which(CC)
-  file 'hello.c.out' => 'hello.c' do |t|
-    sh "#{CC} -O3 -o #{t.name} #{t.source}"
+def file_if (hash, &block)
+  hash.each do |compiler, source|
+    if which(compiler)
+      target = source =~ /^[A-Z]/ ? "#{source.pathmap('%n')}.class" : "#{source}.out"
+      file(target => source, &block)
+      task :compile => target
+    end
   end
 end
 
-if which('crystal')
-  file 'hello.cr.out' => 'hello.cr' do |t|
-    sh "crystal build --release -o #{t.name} #{t.source}"
-  end
+file_if CC => 'hello.c' do |t|
+  sh "#{CC} -O3 -o #{t.name} #{t.source}"
 end
 
-if which('go')
-  file 'hello.go.out' => 'hello.go' do |t|
-    sh "go build -o #{t.name} #{t.source}"
-  end
+file_if dmd: 'hello.d' do |t|
+  sh "dmd -O3 -o #{t.name} #{t.source}"
 end
 
-if which('javac')
-  file 'HelloJava.class' => 'HelloJava.java' do |t|
-    sh "javac #{t.source}"
-  end
+file_if gdc: 'hello.d' do |t|
+  sh "gdc -O3 -o #{t.name} #{t.source}"
 end
 
-if which('scalac')
-  file 'HelloScala.class' => 'HelloScala.scala' do |t|
-    sh "scalac #{t.source}"
-  end
+file_if ldc: 'hello.d' do |t|
+  sh "ldc -O3 -o #{t.name} #{t.source}"
+end
+
+file_if crystal: 'hello.cr' do |t|
+  sh "crystal build --release -o #{t.name} #{t.source}"
+end
+
+file_if go: 'hello.go' do |t|
+  sh "go build -o #{t.name} #{t.source}"
+end
+
+file_if javac: 'HelloJava.java' do |t|
+  sh "javac #{t.source}"
+end
+
+file_if scalac: 'HelloScala.scala' do |t|
+  sh "scalac #{t.source}"
 end
 
 task :default => :compile do
   @times = []
 
-  if silent('ng ng-version') && silent('ng ng-cp .')
-    time 'Java (ng)', 'ng', 'HelloJava'
-  end
-
   time 'Bash',        'bash', 'hello.bash'
   time 'C',           'hello.c.out'
   time 'Crystal',     'hello.cr.out'
+  time 'D',           'hello.d.out'
   time 'Go',          'hello.go.out'
   time 'Java',        'java', 'HelloJava'
+  time 'Java (ng)',   'ng', 'HelloJava' if silent('ng ng-cp .')
   time 'Kotlin',      'kotlin', 'hello.kt'
   time 'Lua',         'lua', 'hello.lua'
   time 'LuaJIT',      'luajit', 'hello.lua'
@@ -88,6 +91,6 @@ task :default => :compile do
   time 'Scala',       'scala', 'HelloScala'
 
   sorted = @times.sort_by { |_, time| time }
-  table = TTY::Table.new [ 'Program', 'Time (ms)' ], sorted
+  table = TTY::Table.new [ 'Test', 'Time (ms)' ], sorted
   puts $/, table.render(:basic, alignments: [ :left, :right ])
 end
