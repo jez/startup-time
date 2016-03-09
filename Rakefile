@@ -3,7 +3,7 @@ require 'rake/clean'
 require 'tty'
 
 CC = ENV['CC'] || 'gcc'
-CLEAN.include %w[ *.out *.class .crystal ]
+CLEAN.include %w[ *.out *.class .crystal META-INF ]
 
 def which (command)
   TTY::Which.which command.to_s
@@ -29,7 +29,12 @@ end
 def file_if (hash, &block)
   hash.each do |compiler, source|
     if which(compiler)
-      target = source =~ /^[A-Z]/ ? "#{source.pathmap('%n')}.class" : "#{source}.out"
+      if source.is_a?(Array)
+        source, target = source
+      else
+        target = source =~ /^[A-Z]/ ? "#{source.pathmap('%n')}.class" : "#{source}.out"
+      end
+
       file(target => source, &block)
       task :compile => target
     end
@@ -40,6 +45,10 @@ file_if CC => 'hello.c' do |t|
   sh "#{CC} -O3 -o #{t.name} #{t.source}"
 end
 
+file_if crystal: 'hello.cr' do |t|
+  sh "crystal build --release -o #{t.name} #{t.source}"
+end
+
 file_if dmd: 'hello.d' do |t|
   sh "dmd -O3 -o #{t.name} #{t.source}"
 end
@@ -48,20 +57,20 @@ file_if gdc: 'hello.d' do |t|
   sh "gdc -O3 -o #{t.name} #{t.source}"
 end
 
-file_if ldc: 'hello.d' do |t|
-  sh "ldc -O3 -o #{t.name} #{t.source}"
-end
-
-file_if crystal: 'hello.cr' do |t|
-  sh "crystal build --release -o #{t.name} #{t.source}"
-end
-
 file_if go: 'hello.go' do |t|
   sh "go build -o #{t.name} #{t.source}"
 end
 
 file_if javac: 'HelloJava.java' do |t|
   sh "javac #{t.source}"
+end
+
+file_if kotlinc: [ 'HelloKotlin.kt', 'HelloKotlinKt.class' ] do |t|
+  sh "kotlinc #{t.source}"
+end
+
+file_if ldc: 'hello.d' do |t|
+  sh "ldc -O3 -o #{t.name} #{t.source}"
 end
 
 file_if scalac: 'HelloScala.scala' do |t|
@@ -78,7 +87,7 @@ task :default => :compile do
   time 'Go',          'hello.go.out'
   time 'Java',        'java', 'HelloJava'
   time 'Java (ng)',   'ng', 'HelloJava' if silent('ng ng-cp .')
-  time 'Kotlin',      'kotlin', 'hello.kt'
+  time 'Kotlin',      'kotlin', 'HelloKotlinKt'
   time 'Lua',         'lua', 'hello.lua'
   time 'LuaJIT',      'luajit', 'hello.lua'
   time 'Node.js',     'node', 'hello.js'

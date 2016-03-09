@@ -1,3 +1,4 @@
 *.out
 .crystal
 *.class
+META-INF
