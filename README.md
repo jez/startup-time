@@ -79,7 +79,7 @@ Patches are welcome, but please make sure the test runs without warnings or erro
 
 ## Copyright and License
 
-Copyright © 2015 by chocolateboy
+Copyright © 2015-2016 by chocolateboy
 
 This benchmark game is free software; you can redistribute it and/or modify it under the
 terms of the [Artistic License 2.0](http://www.opensource.org/licenses/artistic-license-2.0.php).
