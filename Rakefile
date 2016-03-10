@@ -49,11 +49,11 @@ file_if crystal: 'hello.cr' do |t|
   sh "crystal build --release -o #{t.name} #{t.source}"
 end
 
-file_if dmd: 'hello.d' do |t|
+file_if dmd: 'hello.dmd.d' do |t|
   sh "dmd -O3 -o #{t.name} #{t.source}"
 end
 
-file_if gdc: 'hello.d' do |t|
+file_if gdc: 'hello.gdc.d' do |t|
   sh "gdc -O3 -o #{t.name} #{t.source}"
 end
 
@@ -65,11 +65,12 @@ file_if javac: 'HelloJava.java' do |t|
   sh "javac #{t.source}"
 end
 
+# logspam issue: https://youtrack.jetbrains.com/issue/KT-11349
 file_if kotlinc: [ 'HelloKotlin.kt', 'HelloKotlinKt.class' ] do |t|
   sh "kotlinc #{t.source}"
 end
 
-file_if ldc: 'hello.d' do |t|
+file_if ldc: 'hello.ldc.d' do |t|
   sh "ldc -O3 -o #{t.name} #{t.source}"
 end
 
@@ -83,7 +84,9 @@ task :default => :compile do
   time 'Bash',        'bash', 'hello.bash'
   time 'C',           'hello.c.out'
   time 'Crystal',     'hello.cr.out'
-  time 'D',           'hello.d.out'
+  time 'D (DMD)',     'hello.dmd.d.out'
+  time 'D (GDC)',     'hello.gdc.d.out'
+  time 'D (LDC)',     'hello.ldc.d.out'
   time 'Go',          'hello.go.out'
   time 'Java',        'java', 'HelloJava'
   time 'Java (ng)',   'ng', 'HelloJava' if silent('ng ng-cp .')
