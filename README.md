@@ -8,7 +8,7 @@ An attempt to determine which languages are practical (or impractical) to use fo
 
 - [Description](#description)
 - [Example Output](#example-output)
-- [Dependencies](#dependencies)
+- [Prerequisites](#prerequisites)
 - [Setup](#setup)
 - [Tasks](#tasks)
   - [Run the tests](#run-the-tests)
@@ -44,7 +44,7 @@ This benchmark game executes a series of scripts and programs which print out th
     Kotlin         100.15
     Scala          319.25
 
-## Dependencies
+## Prerequisites
 
 * Ruby
 * Rake
