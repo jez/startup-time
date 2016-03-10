@@ -65,7 +65,7 @@ file_if javac: 'HelloJava.java' do |t|
   sh "javac #{t.source}"
 end
 
-# logspam issue: https://youtrack.jetbrains.com/issue/KT-11349
+# XXX use kotlinc >= 1.0.0 to avoid logspam
 file_if kotlinc: [ 'HelloKotlin.kt', 'HelloKotlinKt.class' ] do |t|
   sh "kotlinc #{t.source}"
 end
