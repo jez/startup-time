@@ -78,6 +78,12 @@ file_if scalac: 'HelloScala.scala' do |t|
   sh "scalac #{t.source}"
 end
 
+# preferably Swift >= 2.0
+# https://stackoverflow.com/questions/30865233/print-without-newline-in-swift-2-0
+file_if swiftc: 'hello.swift' do |t|
+  sh "swiftc -O -o hello.swift.out #{t.source}"
+end
+
 task :default => :compile do
   @times = []
 
@@ -101,6 +107,7 @@ task :default => :compile do
   time 'Python 3 -S', 'python3', '-S', 'hello.py'
   time 'Ruby',        'ruby', 'hello.rb'
   time 'Scala',       'scala', 'HelloScala'
+  time 'Swift',       'hello.swift.out'
 
   sorted = @times.sort_by { |_, time| time }
   table = TTY::Table.new [ 'Test', 'Time (ms)' ], sorted
