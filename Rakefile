@@ -1,43 +1,61 @@
 require 'benchmark'
+require 'English'
 require 'rake/clean'
 require 'tty'
 
 # use the old (local) directory for Crystal build files
 # so they can be purged by `rake clean`
 ENV['CRYSTAL_CACHE_DIR'] = '.crystal'
-CLEAN.include %w[ *.out *.class .crystal META-INF ]
+CLEAN.include %w(*.out *.class .crystal META-INF)
 
 CC = ENV['CC'] || 'gcc'
+ROUNDS = 10
 
-def which (command)
+def which(command)
   TTY::Which.which command.to_s
 end
 
-def time (test, *args)
-  return unless args.size == 1 ? File.exists?(args.first) : which(args.first)
+def time(test, *args)
+  if args.size == 1
+    abs_path = File.absolute_path(args.first)
+    return unless File.exist? abs_path
+  else
+    return unless abs_path = which(args.first)
+  end
 
-  out = nil
+  args[0] = abs_path
   command = args.join ' '
   print '.'
-  real = Benchmark.realtime { out = `#{command}` }
+  times = []
 
-  abort "#{test}: invalid output: #{out.inspect}" unless out == "Hello, world!\n"
+  ROUNDS.times do
+    out = nil
+    real = Benchmark.realtime { out = `#{command}` }
 
-  @times.push [ test, (real * 1000).round(2) ]
+    unless out == "Hello, world!#{$RS}"
+      abort "#{test}: invalid output: #{out.inspect}"
+    end
+
+    times.push real
+  end
+
+  @times.push [test, times.min * 1000]
 end
 
-def file_if (hash, &block)
+def file_if(hash, &block)
   hash.each do |compiler, source|
-    if which(compiler)
-      if source.is_a?(Array)
-        source, target = source
-      else
-        target = source =~ /^[A-Z]/ ? "#{source.pathmap('%n')}.class" : "#{source}.out"
-      end
+    next unless which(compiler)
 
-      file(target => source, &block)
-      task :compile => target
+    if source.is_a?(Array)
+      source, target = source
+    elsif source =~ /^[A-Z]/
+      target = "#{source.pathmap('%n')}.class"
+    else
+      target = "#{source}.out"
     end
+
+    file(target => source, &block)
+    task compile: target
   end
 end
 
@@ -66,7 +84,7 @@ file_if javac: 'HelloJava.java' do |t|
 end
 
 # XXX use kotlinc >= 1.0.0 to avoid logspam
-file_if kotlinc: [ 'HelloKotlin.kt', 'HelloKotlinKt.class' ] do |t|
+file_if kotlinc: ['HelloKotlin.kt', 'HelloKotlinKt.class'] do |t|
   sh "kotlinc #{t.source}"
 end
 
@@ -82,7 +100,7 @@ file_if scalac: 'HelloScala.scala' do |t|
   sh "scalac #{t.source}"
 end
 
-task :default => :compile do
+task default: :compile do
   @times = []
 
   time 'Bash',        'bash', 'hello.bash'
@@ -106,7 +124,10 @@ task :default => :compile do
   time 'Rust',        'hello.rs.out'
   time 'Scala',       'scala', 'HelloScala'
 
-  sorted = @times.sort_by { |_, time| time }
-  table = TTY::Table.new [ 'Test', 'Time (ms)' ], sorted
-  puts $/, table.render(:basic, alignments: [ :left, :right ])
+  sorted = @times
+    .sort_by { |_, time| time }
+    .map { |test, time| [test, format('%.02f', time.to_s)] }
+
+  table = TTY::Table.new ['Test', 'Time (ms)'], sorted
+  puts $RS, table.render(:basic, alignments: [:left, :right])
 end

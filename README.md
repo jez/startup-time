@@ -5,7 +5,6 @@ An attempt to determine which languages are practical (or impractical) to use fo
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Description](#description)
 - [Example Output](#example-output)
 - [Prerequisites](#prerequisites)
@@ -22,27 +21,27 @@ An attempt to determine which languages are practical (or impractical) to use fo
 
 ## Description
 
-This benchmark game executes a series of scripts and programs which print out the string "Hello, world!" to the screen. It measures how long each program takes to run and prints a sorted table of the times after each run.
+This benchmark game executes a series of programs which print the line "Hello, world!". It records the fastest time for each program and prints a sorted table of the times after each run.
 
 ## Example Output
 
     Test        Time (ms)
-    C                0.79
-    LuaJIT           1.21
-    Go               1.58
-    Rust             1.86
-    Crystal          1.99
-    Bash             6.19
-    Python 2 -S      8.65
-    Python 2         12.3
-    Python 3 -S     18.62
-    Python 3        34.88
-    Node.js         64.21
-    Java            65.41
-    Kotlin          96.02
-    Perl            99.67
-    Ruby           122.26
-    Scala          339.56
+    C                0.61
+    LuaJIT           0.88
+    Go               0.99
+    Crystal          1.71
+    Perl             1.88
+    Rust             2.38
+    Bash             3.49
+    Python 2 -S      5.12
+    Python 2        11.69
+    Python 3 -S     15.30
+    Python 3        31.48
+    Ruby            47.08
+    Java            55.22
+    Node.js         59.43
+    Kotlin          89.61
+    Scala          326.69
 
 ## Prerequisites
 
