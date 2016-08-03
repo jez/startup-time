@@ -9,19 +9,15 @@ def which (command)
   TTY::Which.which command.to_s
 end
 
-def silent (command)
-  system "#{command} > /dev/null 2>&1"
-end
-
 def time (test, *args)
   return unless args.size == 1 ? File.exists?(args.first) : which(args.first)
 
   out = nil
   command = args.join ' '
   print '.'
-  real = Benchmark.realtime { out = `#{command}`.chomp }
+  real = Benchmark.realtime { out = `#{command}` }
 
-  abort "#{test}: invalid output: #{out}" unless out == 'Hello, world!'
+  abort "#{test}: invalid output: #{out}" unless out == "Hello, world!\n"
 
   @times.push [ test, (real * 1000).round(2) ]
 end
@@ -74,14 +70,12 @@ file_if ldc: 'hello.ldc.d' do |t|
   sh "ldc -O3 -o #{t.name} #{t.source}"
 end
 
-file_if scalac: 'HelloScala.scala' do |t|
-  sh "scalac #{t.source}"
+file_if rustc: 'hello.rs' do |t|
+  sh "rustc -O -o #{t.name} #{t.source}"
 end
 
-# preferably Swift >= 2.0
-# https://stackoverflow.com/questions/30865233/print-without-newline-in-swift-2-0
-file_if swiftc: 'hello.swift' do |t|
-  sh "swiftc -O -o hello.swift.out #{t.source}"
+file_if scalac: 'HelloScala.scala' do |t|
+  sh "scalac #{t.source}"
 end
 
 task :default => :compile do
@@ -95,7 +89,6 @@ task :default => :compile do
   time 'D (LDC)',     'hello.ldc.d.out'
   time 'Go',          'hello.go.out'
   time 'Java',        'java', 'HelloJava'
-  time 'Java (ng)',   'ng', 'HelloJava' if silent('ng ng-cp .')
   time 'Kotlin',      'kotlin', 'HelloKotlinKt'
   time 'Lua',         'lua', 'hello.lua'
   time 'LuaJIT',      'luajit', 'hello.lua'
@@ -106,8 +99,8 @@ task :default => :compile do
   time 'Python 3',    'python3', 'hello.py'
   time 'Python 3 -S', 'python3', '-S', 'hello.py'
   time 'Ruby',        'ruby', 'hello.rb'
+  time 'Rust',        'hello.rs.out'
   time 'Scala',       'scala', 'HelloScala'
-  time 'Swift',       'hello.swift.out'
 
   sorted = @times.sort_by { |_, time| time }
   table = TTY::Table.new [ 'Test', 'Time (ms)' ], sorted

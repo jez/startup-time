@@ -27,22 +27,22 @@ This benchmark game executes a series of scripts and programs which print out th
 ## Example Output
 
     Test        Time (ms)
-    C                0.64
-    Go               1.06
-    LuaJIT           1.12
-    Lua              1.61
-    Crystal          1.92
-    Perl              2.9
-    Python 2 -S      4.92
-    Bash             6.56
-    Python 3 -S     15.67
-    Python 2        16.64
-    Python 3        36.15
-    Ruby            45.61
-    Node.js          54.9
-    Java             58.7
-    Kotlin         100.15
-    Scala          319.25
+    C                0.79
+    LuaJIT           1.21
+    Go               1.58
+    Rust             1.86
+    Crystal          1.99
+    Bash             6.19
+    Python 2 -S      8.65
+    Python 2         12.3
+    Python 3 -S     18.62
+    Python 3        34.88
+    Node.js         64.21
+    Java            65.41
+    Kotlin          96.02
+    Perl            99.67
+    Ruby           122.26
+    Scala          339.56
 
 ## Prerequisites
 
