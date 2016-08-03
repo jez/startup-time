@@ -2,8 +2,12 @@ require 'benchmark'
 require 'rake/clean'
 require 'tty'
 
-CC = ENV['CC'] || 'gcc'
+# use the old (local) directory for Crystal build files
+# so they can be purged by `rake clean`
+ENV['CRYSTAL_CACHE_DIR'] = '.crystal'
 CLEAN.include %w[ *.out *.class .crystal META-INF ]
+
+CC = ENV['CC'] || 'gcc'
 
 def which (command)
   TTY::Which.which command.to_s
@@ -17,7 +21,7 @@ def time (test, *args)
   print '.'
   real = Benchmark.realtime { out = `#{command}` }
 
-  abort "#{test}: invalid output: #{out}" unless out == "Hello, world!\n"
+  abort "#{test}: invalid output: #{out.inspect}" unless out == "Hello, world!\n"
 
   @times.push [ test, (real * 1000).round(2) ]
 end
