@@ -45,8 +45,7 @@ This benchmark game executes a series of programs which print the line "Hello, w
 
 ## Prerequisites
 
-* Ruby
-* Rake
+* Ruby >= 1.9
 * [tty](https://github.com/peter-murach/tty#installation)
 
 ## Setup
