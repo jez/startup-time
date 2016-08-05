@@ -8,8 +8,8 @@ require 'tty'
 ENV['CRYSTAL_CACHE_DIR'] = '.crystal'
 CLEAN.include %w(*.out *.class .crystal META-INF)
 
-CC = ENV['CC'] || 'gcc'
-ROUNDS = 10
+CC     = ENV['CC'] || 'gcc'
+ROUNDS = (ENV['rounds'] || 10).to_i
 
 def which(command)
   TTY::Which.which command.to_s
@@ -100,6 +100,7 @@ file_if scalac: 'HelloScala.scala' do |t|
   sh "scalac #{t.source}"
 end
 
+desc 'Run the tests'
 task default: :compile do
   @times = []
 

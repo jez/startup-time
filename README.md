@@ -26,26 +26,26 @@ This benchmark game executes a series of programs which print the line "Hello, w
 ## Example Output
 
     Test        Time (ms)
-    C                0.43
-    LuaJIT           0.67
-    Go               0.82
-    Rust             0.96
-    Crystal          1.48
-    Perl             1.88
-    Bash             3.92
-    Python 2 -S      4.83
-    Python 2        11.85
-    Python 3 -S     15.20
-    Python 3        31.75
-    Ruby            46.83
-    Java            56.35
-    Node.js         61.07
-    Kotlin          92.32
-    Scala          333.32
+    C                0.45
+    LuaJIT           0.72
+    Go               0.78
+    Rust             0.82
+    Crystal          1.53
+    Perl             1.70
+    Bash             3.23
+    Python 2 -S      4.69
+    Python 2        11.55
+    Python 3 -S     14.94
+    Python 3        31.35
+    Ruby            45.99
+    Java            54.60
+    Node.js         60.12
+    Kotlin          92.58
+    Scala          323.81
 
 ## Prerequisites
 
-* Ruby >= 1.9
+* Ruby >= 1.9.3
 * [tty](https://github.com/peter-murach/tty#installation)
 
 ## Setup
@@ -57,6 +57,10 @@ This benchmark game executes a series of programs which print the line "Hello, w
 ### Run the tests
 
     rake
+
+Or:
+
+    rake rounds=20 # change the number of times each program is executed (default: 10)
 
 ### Clean up temporary files
 
