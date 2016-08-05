@@ -50,7 +50,7 @@ This benchmark game executes a series of programs which print the line "Hello, w
 
 ## Setup
 
-    $ gem install tty
+    gem install tty
 
 ## Tasks
 
