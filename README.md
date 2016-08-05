@@ -26,23 +26,22 @@ This benchmark game executes a series of programs which print the line "Hello, w
 ## Example Output
 
     Test        Time (ms)
-    C                0.45
-    LuaJIT           0.81
-    Go               0.99
-    Lua              1.26
-    Perl             1.76
-    Crystal          1.87
-    Rust             2.31
-    Bash             3.41
-    Python 2 -S      4.76
-    Python 2        11.74
-    Python 3 -S     15.03
-    Python 3        31.71
-    Ruby            45.87
-    Java            55.72
-    Node.js         60.22
-    Kotlin          91.49
-    Scala          322.30
+    C                0.43
+    LuaJIT           0.67
+    Go               0.82
+    Rust             0.96
+    Crystal          1.48
+    Perl             1.88
+    Bash             3.92
+    Python 2 -S      4.83
+    Python 2        11.85
+    Python 3 -S     15.20
+    Python 3        31.75
+    Ruby            46.83
+    Java            56.35
+    Node.js         61.07
+    Kotlin          92.32
+    Scala          333.32
 
 ## Prerequisites
 
