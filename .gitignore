@@ -1,4 +1,5 @@
-*.out
-.crystal
 *.class
-META-INF
+/.crystal
+/dev
+/META-INF
+*.out
