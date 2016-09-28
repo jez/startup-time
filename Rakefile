@@ -8,8 +8,9 @@ require 'tty'
 ENV['CRYSTAL_CACHE_DIR'] = '.crystal'
 CLEAN.include %w(*.out *.class .crystal META-INF)
 
-CC     = ENV['CC'] || 'gcc'
-ROUNDS = (ENV['rounds'] || 10).to_i
+CC              = ENV['CC'] || 'gcc'
+EXPECTED_OUTPUT = "Hello, world!#{$RS}"
+ROUNDS          = (ENV['rounds'] || 10).to_i
 
 def which(command)
   TTY::Which.which command.to_s
@@ -23,23 +24,25 @@ def time(test, *args)
     return unless abs_path = which(args.first)
   end
 
-  args[0] = abs_path
-  command = args.join ' '
-  print '.'
-  times = []
+  argv0 = args.shift
+  cmdname = abs_path
+  command = [cmdname, *args].join(' ')
 
-  ROUNDS.times do
-    out = nil
-    real = Benchmark.realtime { out = `#{command}` }
+  # make sure the command produces the expected output
+  output = `#{command}`
 
-    unless out == "Hello, world!#{$RS}"
-      abort "#{test}: invalid output: #{out.inspect}"
-    end
-
-    times.push real
+  unless output == EXPECTED_OUTPUT
+    abort "#{test}: invalid output: #{output.inspect}"
   end
 
-  @times.push [test, times.min * 1000]
+  times = []
+  print '.'
+
+  ROUNDS.times do
+    times << Benchmark.realtime { system([cmdname, argv0], *args, out: File::NULL) }
+  end
+
+  @times << [test, times.min * 1000]
 end
 
 def file_if(hash, &block)
