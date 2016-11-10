@@ -9,6 +9,7 @@ ENV['CRYSTAL_CACHE_DIR'] = '.crystal'
 CLEAN.include %w(*.out *.class .crystal META-INF)
 
 CC              = ENV['CC'] || 'gcc'
+DEVNULL         = File.open(File::NULL, 'w')
 EXPECTED_OUTPUT = "Hello, world!#{$RS}"
 ROUNDS          = (ENV['rounds'] || 10).to_i
 
@@ -39,7 +40,7 @@ def time(test, *args)
   print '.'
 
   ROUNDS.times do
-    times << Benchmark.realtime { system([cmdname, argv0], *args, out: File::NULL) }
+    times << Benchmark.realtime { system([cmdname, argv0], *args, out: DEVNULL) }
   end
 
   @times << [test, times.min * 1000]

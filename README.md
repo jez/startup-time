@@ -1,6 +1,6 @@
 # Startup Time
 
-An attempt to determine which languages are practical (or impractical) to use for command-line interface (CLI) commands.
+An attempt to determine which languages are practical (or impractical) to use for command-line interface (CLI) programs.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
