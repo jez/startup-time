@@ -22,7 +22,7 @@ An attempt to determine which languages are practical (or impractical) to use fo
 
 ## Description
 
-This benchmark game executes ["Hello, world!"](https://en.wikipedia.org/wiki/%22Hello,_World!%22_program) programs written in various languages. It records the fastest time for each program and prints a sorted table of the times after each run. With the exception of the [prerequisites](#prerequisites) listed below, it does not require any of the tested languages to be installed: if a compiler/interpreter is not available, the test is skipped.
+This benchmark game tests how long it takes to execute ["Hello, world!"](https://en.wikipedia.org/wiki/%22Hello,_World!%22_program) programs written in various languages. It records the fastest time for each program and prints a sorted table of the times after each run. With the exception of the [prerequisites](#prerequisites) listed below, it does not require any of the tested languages to be installed: if a compiler/interpreter is not available, the test is skipped.
 
 ## Example Output
 
