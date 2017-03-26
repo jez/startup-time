@@ -121,6 +121,7 @@ task default: :compile do
   time 'LuaJIT',      'luajit', 'hello.lua'
   time 'Node.js',     'node', 'hello.js'
   time 'Perl',        'perl', 'hello.pl'
+  time 'Perl 6',      'perl6', 'hello.p6'
   time 'Python 2',    'python2', 'hello.py'
   time 'Python 2 -S', 'python2', '-S', 'hello.py'
   time 'Python 3',    'python3', 'hello.py'
