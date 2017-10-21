@@ -5,7 +5,7 @@ require 'tty'
 # use the old (local) directory for Crystal build files
 # so they can be purged by `rake clean`
 ENV['CRYSTAL_CACHE_DIR'] = '.crystal'
-CLEAN.include %w(*.out *.class .crystal META-INF)
+CLEAN.include %w(*.out *.class .crystal .ghc META-INF)
 
 CC              = ENV['CC'] || 'gcc'
 DEVNULL         = File.open(File::NULL, 'w')
@@ -78,6 +78,10 @@ file_if gdc: 'hello.gdc.d' do |t|
   sh "gdc -O3 -o #{t.name} #{t.source}"
 end
 
+file_if ghc: 'hello.hs' do |t|
+  sh "ghc -v0 -O2 -outputdir .ghc -o #{t.name} #{t.source}"
+end
+
 file_if go: 'hello.go' do |t|
   sh "go build -o #{t.name} #{t.source}"
 end
@@ -107,27 +111,28 @@ desc 'Run the tests'
 task default: :compile do
   @times = []
 
-  time 'Bash',        'bash', 'hello.bash'
-  time 'C',           'hello.c.out'
-  time 'Crystal',     'hello.cr.out'
-  time 'D (DMD)',     'hello.dmd.d.out'
-  time 'D (GDC)',     'hello.gdc.d.out'
-  time 'D (LDC)',     'hello.ldc.d.out'
-  time 'Go',          'hello.go.out'
-  time 'Java',        'java', 'HelloJava'
-  time 'Kotlin',      'kotlin', 'HelloKotlinKt'
-  time 'Lua',         'lua', 'hello.lua'
-  time 'LuaJIT',      'luajit', 'hello.lua'
-  time 'Node.js',     'node', 'hello.js'
-  time 'Perl',        'perl', 'hello.pl'
-  time 'Perl 6',      'perl6', 'hello.p6'
-  time 'Python 2',    'python2', 'hello.py'
-  time 'Python 2 -S', 'python2', '-S', 'hello.py'
-  time 'Python 3',    'python3', 'hello.py'
-  time 'Python 3 -S', 'python3', '-S', 'hello.py'
-  time 'Ruby',        'ruby', 'hello.rb'
-  time 'Rust',        'hello.rs.out'
-  time 'Scala',       'scala', 'HelloScala'
+  time 'Bash',          'bash', 'hello.bash'
+  time 'C',             'hello.c.out'
+  time 'Crystal',       'hello.cr.out'
+  time 'D (DMD)',       'hello.dmd.d.out'
+  time 'D (GDC)',       'hello.gdc.d.out'
+  time 'D (LDC)',       'hello.ldc.d.out'
+  time 'Go',            'hello.go.out'
+  time 'Haskell (GHC)', 'hello.hs.out'
+  time 'Java',          'java', 'HelloJava'
+  time 'Kotlin',        'kotlin', 'HelloKotlinKt'
+  time 'Lua',           'lua', 'hello.lua'
+  time 'LuaJIT',        'luajit', 'hello.lua'
+  time 'Node.js',       'node', 'hello.js'
+  time 'Perl',          'perl', 'hello.pl'
+  time 'Perl 6',        'perl6', 'hello.p6'
+  time 'Python 2',      'python2', 'hello.py'
+  time 'Python 2 -S',   'python2', '-S', 'hello.py'
+  time 'Python 3',      'python3', 'hello.py'
+  time 'Python 3 -S',   'python3', '-S', 'hello.py'
+  time 'Ruby',          'ruby', 'hello.rb'
+  time 'Rust',          'hello.rs.out'
+  time 'Scala',         'scala', 'HelloScala'
 
   sorted = @times
     .sort_by { |_, time| time }

@@ -1,6 +1,7 @@
 *.class
 /.crystal
 /dev
+/.ghc
 /META-INF
 *.log
 *.out
