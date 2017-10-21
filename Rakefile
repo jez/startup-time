@@ -9,7 +9,7 @@ CLEAN.include %w(*.out *.class .crystal .ghc META-INF)
 
 CC              = ENV['CC'] || 'gcc'
 DEVNULL         = File.open(File::NULL, 'w')
-EXPECTED_OUTPUT = /^Hello, world!\r?\n$/
+EXPECTED_OUTPUT = /\AHello, world!\r?\n\z/
 ROUNDS          = (ENV['rounds'] || 10).to_i
 
 def which(command)
@@ -32,7 +32,7 @@ def time(test, *args)
   output = `#{command}`
 
   unless output =~ EXPECTED_OUTPUT
-    abort "#{test}: invalid output: #{output.inspect}"
+    abort "invalid output for #{test}: #{output.inspect}"
   end
 
   times = []
