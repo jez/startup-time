@@ -1,5 +1,4 @@
 require 'benchmark'
-require 'English'
 require 'rake/clean'
 require 'tty'
 
@@ -10,7 +9,7 @@ CLEAN.include %w(*.out *.class .crystal META-INF)
 
 CC              = ENV['CC'] || 'gcc'
 DEVNULL         = File.open(File::NULL, 'w')
-EXPECTED_OUTPUT = "Hello, world!#{$RS}"
+EXPECTED_OUTPUT = /^Hello, world!\r?\n$/
 ROUNDS          = (ENV['rounds'] || 10).to_i
 
 def which(command)
@@ -32,7 +31,7 @@ def time(test, *args)
   # make sure the command produces the expected output
   output = `#{command}`
 
-  unless output == EXPECTED_OUTPUT
+  unless output =~ EXPECTED_OUTPUT
     abort "#{test}: invalid output: #{output.inspect}"
   end
 
@@ -135,5 +134,5 @@ task default: :compile do
     .map { |test, time| [test, format('%.02f', time.to_s)] }
 
   table = TTY::Table.new ['Test', 'Time (ms)'], sorted
-  puts $RS, table.render(:basic, alignments: [:left, :right])
+  puts $/, table.render(:basic, alignments: [:left, :right])
 end
