@@ -7,7 +7,6 @@ require 'tty'
 ENV['CRYSTAL_CACHE_DIR'] = '.crystal'
 CLEAN.include %w(*.out *.class .crystal .ghc META-INF)
 
-CC              = ENV['CC'] || 'gcc'
 DEVNULL         = File.open(File::NULL, 'w')
 EXPECTED_OUTPUT = /\AHello, world!\r?\n\z/
 ROUNDS          = (ENV['rounds'] || 10).to_i
@@ -62,8 +61,12 @@ def file_if(hash, &block)
   end
 end
 
-file_if CC => 'hello.c' do |t|
-  sh "#{CC} -O3 -o #{t.name} #{t.source}"
+file_if 'g++' => 'hello.cpp' do |t|
+  sh "g++ -O3 -o #{t.name} #{t.source}"
+end
+
+file_if gcc: 'hello.c' do |t|
+  sh "gcc -O3 -o #{t.name} #{t.source}"
 end
 
 file_if crystal: 'hello.cr' do |t|
@@ -112,7 +115,8 @@ task default: :compile do
   @times = []
 
   time 'Bash',          'bash', 'hello.bash'
-  time 'C',             'hello.c.out'
+  time 'C (gcc)',       'hello.c.out'
+  time 'C++ (g++)',     'hello.cpp.out'
   time 'Crystal',       'hello.cr.out'
   time 'D (DMD)',       'hello.dmd.d.out'
   time 'D (GDC)',       'hello.gdc.d.out'
