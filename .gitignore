@@ -1,3 +1,4 @@
+*.bc
 *.class
 /.crystal
 /dev

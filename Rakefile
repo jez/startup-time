@@ -5,7 +5,7 @@ require 'tty'
 # use the old (local) directory for Crystal build files
 # so they can be purged by `rake clean`
 ENV['CRYSTAL_CACHE_DIR'] = '.crystal'
-CLEAN.include %w(*.out *.class .crystal .ghc META-INF)
+CLEAN.include %w(*.bc *.class .crystal .ghc META-INF *.out)
 
 DEVNULL         = File.open(File::NULL, 'w')
 EXPECTED_OUTPUT = /\AHello, world!\r?\n\z/
@@ -98,6 +98,17 @@ file_if kotlinc: ['HelloKotlin.kt', 'HelloKotlinKt.class'] do |t|
   sh "kotlinc #{t.source}"
 end
 
+file_if 'kotlinc-native' => ['HelloKotlin.kt', 'hello.kt.out'] do |t|
+  # XXX kotlinc-native doesn't provide a way to silence
+  # its debug messages, so, for now, file them in /dev/null
+  sh "kotlinc-native -opt -o #{t.name} #{t.source}", out: DEVNULL
+
+  # XXX work around a kotlinc-native "feature"
+  # https://github.com/JetBrains/kotlin-native/issues/967
+  exe = "#{t.name}.kexe" # XXX or .exe, or...
+  verbose (false) { mv exe, t.name } if File.exist?(exe)
+end
+
 file_if ldc: 'hello.ldc.d' do |t|
   sh "ldc -O3 -o #{t.name} #{t.source}"
 end
@@ -125,6 +136,7 @@ task default: :compile do
   time 'Haskell (GHC)', 'hello.hs.out'
   time 'Java',          'java', 'HelloJava'
   time 'Kotlin',        'kotlin', 'HelloKotlinKt'
+  time 'Kotlin Native', 'hello.kt.out'
   time 'Lua',           'lua', 'hello.lua'
   time 'LuaJIT',        'luajit', 'hello.lua'
   time 'Node.js',       'node', 'hello.js'

@@ -27,25 +27,26 @@ This benchmark game tests how long it takes to execute ["Hello, world!"](https:/
 ## Example Output
 
     Test          Time (ms)
-    C (gcc)            0.43
-    Go                 0.74
-    Rust               0.81
-    LuaJIT             1.15
-    C++ (g++)          1.44
-    Lua                1.47
-    Haskell (GHC)      1.58
-    Perl               1.68
-    Crystal            2.52
-    Bash               3.20
-    Python 2 -S        6.08
-    Python 2          10.34
-    Python 3 -S       13.29
-    Python 3          20.77
-    Ruby              41.74
+    C (gcc)            0.37
+    LuaJIT             0.59
+    Go                 0.78
+    Kotlin Native      0.95
+    Lua                1.64
+    Perl               1.72
+    Haskell (GHC)      1.84
+    Rust               1.91
+    Crystal            1.93
+    C++ (g++)          2.31
+    Bash               3.62
+    Python 2 -S        4.66
+    Python 2          12.09
+    Python 3 -S       13.74
+    Python 3          20.42
+    Ruby              41.49
     Java              55.18
-    Node.js           67.20
-    Kotlin           106.80
-    Scala            810.49
+    Node.js           66.48
+    Kotlin           105.51
+    Scala            797.23
 
 ## Prerequisites
 
