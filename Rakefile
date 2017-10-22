@@ -46,7 +46,7 @@ end
 
 def file_if(hash, &block)
   hash.each do |compiler, source|
-    next unless which(compiler)
+    next unless compiler_path = which(compiler)
 
     if source.is_a?(Array)
       source, target = source
@@ -56,7 +56,10 @@ def file_if(hash, &block)
       target = "#{source}.out"
     end
 
-    file(target => source, &block)
+    # compiler_path: recompile if the compiler has been
+    # updated since the target was last built
+    file(target => [ source, compiler_path ], &block)
+
     task compile: target
   end
 end
