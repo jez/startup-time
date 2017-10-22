@@ -93,7 +93,7 @@ file_if go: 'hello.go' do |t|
 end
 
 file_if javac: 'HelloJava.java' do |t|
-  sh "javac #{t.source}"
+  sh "javac -d . #{t.source}"
 end
 
 # XXX use kotlinc >= 1.0.0 to avoid logspam
