@@ -9,7 +9,8 @@ CLEAN.include %w(*.bc *.class .crystal .ghc META-INF *.out)
 
 DEVNULL         = File.open(File::NULL, 'w')
 EXPECTED_OUTPUT = /\AHello, world!\r?\n\z/
-ROUNDS          = (ENV['rounds'] || 10).to_i
+# ROUNDS          = (ENV['rounds'] || 10).to_i
+ROUNDS          = 1
 
 def which(command)
   TTY::Which.which command.to_s
@@ -27,18 +28,18 @@ def time(test, *args)
   cmdname = abs_path
   command = [cmdname, *args].join(' ')
 
-  # make sure the command produces the expected output
-  output = `#{command}`
+  # # make sure the command produces the expected output
+  # output = `#{command}`
 
-  unless output =~ EXPECTED_OUTPUT
-    abort "invalid output for #{test}: #{output.inspect}"
-  end
+  # unless output =~ EXPECTED_OUTPUT
+  #   abort "invalid output for #{test}: #{output.inspect}"
+  # end
 
   times = []
   print '.'
 
   ROUNDS.times do
-    times << Benchmark.realtime { system([cmdname, argv0], *args, out: DEVNULL) }
+    times << Benchmark.realtime { system([cmdname, argv0], *args) }
   end
 
   @times << [test, times.min * 1000]
@@ -84,8 +85,16 @@ file_if gdc: 'hello.gdc.d' do |t|
   sh "gdc -O3 -o #{t.name} #{t.source}"
 end
 
-file_if ghc: 'hello.hs' do |t|
-  sh "ghc -v0 -O2 -outputdir .ghc -o #{t.name} #{t.source}"
+file_if stack: 'hello.hs' do |t|
+  sh "stack ghc -- -v0 -O2 -outputdir .ghc -o #{t.name} #{t.source}"
+end
+
+file_if mlton: 'hello.sml' do |t|
+  sh "mlton -output #{t.name} #{t.source}"
+end
+
+file_if ocamlc: 'hello.ml' do |t|
+  sh "ocamlc -o #{t.name} #{t.source}"
 end
 
 file_if go: 'hello.go' do |t|
@@ -128,30 +137,32 @@ desc 'Run the tests'
 task default: :compile do
   @times = []
 
-  time 'Bash',          'bash', 'hello.bash'
-  time 'C (gcc)',       'hello.c.out'
-  time 'C++ (g++)',     'hello.cpp.out'
-  time 'Crystal',       'hello.cr.out'
-  time 'D (DMD)',       'hello.dmd.d.out'
-  time 'D (GDC)',       'hello.gdc.d.out'
-  time 'D (LDC)',       'hello.ldc.d.out'
-  time 'Go',            'hello.go.out'
-  time 'Haskell (GHC)', 'hello.hs.out'
-  time 'Java',          'java', 'HelloJava'
-  time 'Kotlin',        'kotlin', 'HelloKotlinKt'
-  time 'Kotlin Native', 'hello.kt.out'
-  time 'Lua',           'lua', 'hello.lua'
-  time 'LuaJIT',        'luajit', 'hello.lua'
-  time 'Node.js',       'node', 'hello.js'
-  time 'Perl',          'perl', 'hello.pl'
-  time 'Perl 6',        'perl6', 'hello.p6'
-  time 'Python 2',      'python2', 'hello.py'
-  time 'Python 2 -S',   'python2', '-S', 'hello.py'
-  time 'Python 3',      'python3', 'hello.py'
-  time 'Python 3 -S',   'python3', '-S', 'hello.py'
-  time 'Ruby',          'ruby', 'hello.rb'
-  time 'Rust',          'hello.rs.out'
-  time 'Scala',         'scala', 'HelloScala'
+  time 'Bash',                'bash', 'hello.bash'
+  time 'C (gcc)',             'hello.c.out'
+  time 'C++ (g++)',           'hello.cpp.out'
+  time 'Crystal',             'hello.cr.out'
+  time 'D (DMD)',             'hello.dmd.d.out'
+  time 'D (GDC)',             'hello.gdc.d.out'
+  time 'D (LDC)',             'hello.ldc.d.out'
+  time 'Go',                  'hello.go.out'
+  time 'Haskell (GHC)',       'hello.hs.out'
+  time 'Java',                'java', 'HelloJava'
+  time 'Kotlin',              'kotlin', 'HelloKotlinKt'
+  time 'Kotlin Native',       'hello.kt.out'
+  time 'Lua',                 'lua', 'hello.lua'
+  time 'LuaJIT',              'luajit', 'hello.lua'
+  time 'Node.js',             'node', 'hello.js'
+  time 'OCaml',               'hello.ml.out'
+  time 'Perl',                'perl', 'hello.pl'
+  time 'Perl 6',              'perl6', 'hello.p6'
+  time 'Python 2',            'python2', 'hello.py'
+  time 'Python 2 -S',         'python2', '-S', 'hello.py'
+  time 'Python 3',            'python3', 'hello.py'
+  time 'Python 3 -S',         'python3', '-S', 'hello.py'
+  time 'Ruby',                'ruby', 'hello.rb'
+  time 'Rust',                'hello.rs.out'
+  time 'Scala',               'scala', 'HelloScala'
+  time 'Standard ML (MLton)', 'hello.sml.out'
 
   sorted = @times
     .sort_by { |_, time| time }
